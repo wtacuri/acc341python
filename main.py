@@ -4,18 +4,15 @@ import os
 
 load_dotenv()
 
-conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+conn = psycopg2.connect(
+    os.getenv("DATABASE_URL")
+)
 
 cursor = conn.cursor()
 
 cursor.execute("""
-SELECT c.company_name,
-SUM(i.total_amount) AS total_billed
-FROM invoice i
-JOIN customer c
-ON i.customer_id = c.customer_id
-GROUP BY c.company_name
-ORDER BY total_billed DESC;
+SELECT product_name, category, unit_price
+FROM product;
 """)
 
 rows = cursor.fetchall()
