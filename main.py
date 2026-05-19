@@ -22,3 +22,4 @@ for row in rows:
 
 cursor.close()
 conn.close()
+# single table query
