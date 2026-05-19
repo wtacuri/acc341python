@@ -1,39 +1,24 @@
 import psycopg2
+from dotenv import load_dotenv
+import os
 
-connection_string = "postgresql://neondb_owner:npg_ZkS7teI2QDgv@ep-curly-dust-am2ew268-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+# Load DATABASE_URL from .env
+load_dotenv()
 
-conn = psycopg2.connect(connection_string)
+conn = psycopg2.connect(
+    os.getenv("DATABASE_URL")
+)
 
-cur = conn.cursor()
+# Cursor runs SQL
+cursor = conn.cursor()
 
-print("Connected!")
+# Query customers
+cursor.execute("SELECT * FROM customer;")
 
-# Customers
-cur.execute("SELECT * FROM customer LIMIT 5;")
+rows = cursor.fetchall()
 
-customers = cur.fetchall()
-
-print("\nCUSTOMERS")
-for row in customers:
+for row in rows:
     print(row)
 
-# Products
-cur.execute("SELECT * FROM product LIMIT 5;")
-
-products = cur.fetchall()
-
-print("\nPRODUCTS")
-for row in products:
-    print(row)
-
-# Invoices
-cur.execute("SELECT * FROM invoice LIMIT 5;")
-
-invoices = cur.fetchall()
-
-print("\nINVOICES")
-for row in invoices:
-    print(row)
-
-cur.close()
+cursor.close()
 conn.close()
