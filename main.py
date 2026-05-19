@@ -2,18 +2,21 @@ import psycopg2
 from dotenv import load_dotenv
 import os
 
-# Load DATABASE_URL from .env
 load_dotenv()
 
-conn = psycopg2.connect(
-    os.getenv("DATABASE_URL")
-)
+conn = psycopg2.connect(os.getenv("DATABASE_URL"))
 
-# Cursor runs SQL
 cursor = conn.cursor()
 
-# Query customers
-cursor.execute("SELECT * FROM customer;")
+cursor.execute("""
+SELECT c.company_name,
+SUM(i.total_amount) AS total_billed
+FROM invoice i
+JOIN customer c
+ON i.customer_id = c.customer_id
+GROUP BY c.company_name
+ORDER BY total_billed DESC;
+""")
 
 rows = cursor.fetchall()
 
